@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_test_application/models/albums.dart';
 import 'package:flutter_test_application/models/post.dart';
 import 'package:flutter_test_application/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -10,15 +11,21 @@ final StreamController<List<User>> _streamControllerUsers =
     StreamController<List<User>>.broadcast();
 
 Stream<List<User>> get streamUsers => _streamControllerUsers.stream;
-StreamSink get _addValueUser => _streamControllerUsers.sink;
+StreamSink get _addValueUsers => _streamControllerUsers.sink;
 
 final StreamController<List<Post>> _streamControllerPosts =
     StreamController<List<Post>>.broadcast();
 
 Stream<List<Post>> get streamPosts => _streamControllerPosts.stream;
-StreamSink get _addValuePost => _streamControllerPosts.sink;
+StreamSink get _addValuePosts => _streamControllerPosts.sink;
 
-Future<void> GetUsers() async {
+final StreamController<List<Albums>> _streamControllerAllbums =
+    StreamController<List<Albums>>.broadcast();
+
+Stream<List<Albums>> get streamAlbums => _streamControllerAllbums.stream;
+StreamSink get _addValueAlbums => _streamControllerAllbums.sink;
+
+Future<void> getUsers() async {
   try {
     http.Response response =
         await http.get(Uri.parse("https://jsonplaceholder.typicode.com/users"));
@@ -30,14 +37,14 @@ Future<void> GetUsers() async {
       List<User> users =
           List<User>.from(lUsers.map((data) => User.fromJson(data)));
 
-      _addValueUser.add(users);
+      _addValueUsers.add(users);
     }
   } on SocketException catch (_) {
-    _addValueUser.addError("No internet");
+    _addValueUsers.addError("No internet");
   }
 }
 
-Future<void> GetPosts(userId) async {
+Future<void> getPosts(userId) async {
   try {
     http.Response response = await http.get(Uri.parse(
         "https://jsonplaceholder.typicode.com/posts/?userId=$userId"));
@@ -49,9 +56,47 @@ Future<void> GetPosts(userId) async {
       List<Post> posts =
           List<Post>.from(lPosts.map((data) => Post.fromJson(data)));
 
-      _addValuePost.add(posts);
+      _addValuePosts.add(posts);
     }
   } on SocketException catch (_) {
-    _addValuePost.addError("No internet");
+    _addValuePosts.addError("No internet");
+  }
+}
+
+Future<void> getAllbums(userId) async {
+  try {
+    http.Response response = await http.get(Uri.parse(
+        "https://jsonplaceholder.typicode.com/albums/?userId=$userId"));
+
+    if (response.statusCode == 200) {
+      String data = response.body;
+      Iterable lalbums = jsonDecode(data);
+
+      List<Albums> albums =
+          List<Albums>.from(lalbums.map((data) => Albums.fromJson(data)));
+
+      _addValueAlbums.add(albums);
+    }
+  } on SocketException catch (_) {
+    _addValueAlbums.addError("No internet");
+  }
+}
+
+Future<List<AlbumsPreview>> getAllbumsPhotos(albumId) async {
+  try {
+    http.Response response = await http.get(Uri.parse(
+        "https://jsonplaceholder.typicode.com/photos/?albumId=$albumId"));
+
+    if (response.statusCode == 200) {
+      String data = response.body;
+      Iterable lAlbums = jsonDecode(data);
+
+      return List<AlbumsPreview>.from(
+          lAlbums.map((data) => AlbumsPreview.fromJson(data)));
+    }
+
+    return Future.error("No internet");
+  } on SocketException catch (_) {
+    return Future.error("No internet");
   }
 }

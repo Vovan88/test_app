@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test_application/bloc/bloc.dart';
+import 'package:flutter_test_application/models/albums.dart';
 import 'package:flutter_test_application/models/post.dart';
 import 'package:flutter_test_application/models/user.dart';
 import 'package:flutter_test_application/ui/posts_screen.dart';
+import 'package:flutter_test_application/widgets/album_card.dart';
 
 import '../widgets/post_card.dart';
 import '../widgets/user_card_detail.dart';
@@ -23,7 +25,8 @@ class UserInfoScreen extends StatefulWidget {
 class UserInfoScreenState extends State<UserInfoScreen> {
   @override
   void initState() {
-    GetPosts(widget.userCard.id);
+    getAllbums(widget.userCard.id);
+    getPosts(widget.userCard.id);
     super.initState();
   }
 
@@ -37,6 +40,34 @@ class UserInfoScreenState extends State<UserInfoScreen> {
         Column(
           children: [
             UserCardDetailWidget(userCard: widget.userCard),
+            Flexible(
+              child: StreamBuilder<List<Albums>>(
+                  stream: streamAlbums,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Albums>> snapshot) {
+                    if (snapshot.hasError) {
+                      Text(snapshot.error.toString());
+                    }
+
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 3,
+                          itemBuilder: (BuildContext context, int index) {
+                            return AlbumCardWidget(
+                              albumCard: snapshot.data![index],
+                            );
+                          });
+                    }
+
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.amber,
+                        color: Colors.yellow,
+                      ),
+                    );
+                  }),
+            ),
             Flexible(
               child: StreamBuilder<List<Post>>(
                   stream: streamPosts,
@@ -100,7 +131,7 @@ class UserInfoScreenState extends State<UserInfoScreen> {
                     child: TextButton(
                         onPressed: () {},
                         child: const Text(
-                          "All allbums",
+                          "All albums",
                           style: TextStyle(color: Colors.white),
                         )))
               ],

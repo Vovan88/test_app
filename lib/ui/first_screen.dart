@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_test_application/bloc/bloc.dart';
 import 'package:flutter_test_application/models/user.dart';
 import 'package:flutter_test_application/ui/userinfo_screen.dart';

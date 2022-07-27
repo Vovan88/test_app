@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test_application/models/post.dart';
-
-import '../widgets/post_card.dart';
+import 'package:flutter_test_application/ui/postdetil_screen.dart';
+import 'package:flutter_test_application/widgets/post_card_detail.dart';
 
 class AllPostScreen extends StatefulWidget {
   final List<Post> listPost;
@@ -27,8 +28,13 @@ class AllPostScreenState extends State<AllPostScreen> {
       body: ListView.builder(
           itemCount: widget.listPost.length,
           itemBuilder: (BuildContext context, int index) {
-            return PostCardWidget(
+            return PostCardDetailWidget(
               postCard: widget.listPost[index],
+              onTap: (post) {
+                Navigator.push(context, CupertinoPageRoute(builder: (context) {
+                  return PostDetailScreen(post);
+                }));
+              },
             );
           }),
     );

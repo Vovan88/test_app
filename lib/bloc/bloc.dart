@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test_application/models/albums.dart';
+import 'package:flutter_test_application/models/comment.dart';
 import 'package:flutter_test_application/models/post.dart';
 import 'package:flutter_test_application/models/user.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +25,12 @@ final StreamController<List<Albums>> _streamControllerAllbums =
 
 Stream<List<Albums>> get streamAlbums => _streamControllerAllbums.stream;
 StreamSink get _addValueAlbums => _streamControllerAllbums.sink;
+
+final StreamController<List<Comment>> _streamControllerComments =
+    StreamController<List<Comment>>.broadcast();
+
+Stream<List<Comment>> get streamComments => _streamControllerComments.stream;
+StreamSink get _addValueComments => _streamControllerComments.sink;
 
 Future<void> getUsers() async {
   try {
@@ -82,7 +89,7 @@ Future<void> getAllbums(userId) async {
   }
 }
 
-Future<List<AlbumsPreview>> getAllbumsPhotos(albumId) async {
+Future<void> getAllbumsPhotos(albumId) async {
   try {
     http.Response response = await http.get(Uri.parse(
         "https://jsonplaceholder.typicode.com/photos/?albumId=$albumId"));
@@ -91,8 +98,29 @@ Future<List<AlbumsPreview>> getAllbumsPhotos(albumId) async {
       String data = response.body;
       Iterable lAlbums = jsonDecode(data);
 
-      return List<AlbumsPreview>.from(
+      List<AlbumsPreview>.from(
           lAlbums.map((data) => AlbumsPreview.fromJson(data)));
+    }
+
+    return Future.error("No internet");
+  } on SocketException catch (_) {
+    return Future.error("No internet");
+  }
+}
+
+Future<List<Comment>> getComments(postId) async {
+  try {
+    http.Response response = await http.get(Uri.parse(
+        "https://jsonplaceholder.typicode.com/comments/?postId=$postId"));
+
+    if (response.statusCode == 200) {
+      String data = response.body;
+      Iterable lcomments = jsonDecode(data);
+
+      List<Comment> comments =
+          List<Comment>.from(lcomments.map((data) => Comment.fromJson(data)));
+
+      _addValueComments.add(comments);
     }
 
     return Future.error("No internet");

@@ -4,6 +4,7 @@ import 'package:flutter_test_application/bloc/bloc.dart';
 import 'package:flutter_test_application/models/albums.dart';
 import 'package:flutter_test_application/models/post.dart';
 import 'package:flutter_test_application/models/user.dart';
+import 'package:flutter_test_application/ui/albums_screen.dart';
 import 'package:flutter_test_application/ui/posts_screen.dart';
 import 'package:flutter_test_application/widgets/album_card.dart';
 
@@ -33,7 +34,7 @@ class UserInfoScreenState extends State<UserInfoScreen> {
   @override
   Widget build(BuildContext context) {
     List<Post> allposts = List.empty();
-
+    List<Albums> allAlbums = List.empty();
     return Scaffold(
       appBar: AppBar(title: Text(widget.userCard.username)),
       body: Stack(children: [
@@ -50,6 +51,7 @@ class UserInfoScreenState extends State<UserInfoScreen> {
                     }
 
                     if (snapshot.hasData) {
+                      allAlbums = snapshot.data as List<Albums>;
                       return ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: 3,
@@ -129,7 +131,18 @@ class UserInfoScreenState extends State<UserInfoScreen> {
                 Container(
                     color: Colors.blueGrey,
                     child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (allAlbums.isNotEmpty) {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(builder: (context) {
+                                return AllAlbumsScreen(
+                                  listAlbum: allAlbums,
+                                );
+                              }),
+                            );
+                          }
+                        },
                         child: const Text(
                           "All albums",
                           style: TextStyle(color: Colors.white),

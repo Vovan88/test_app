@@ -89,7 +89,7 @@ Future<void> getAllbums(userId) async {
   }
 }
 
-Future<void> getAllbumsPhotos(albumId) async {
+Future<List<AlbumsPreview>> getAllbumsPhotos(albumId) async {
   try {
     http.Response response = await http.get(Uri.parse(
         "https://jsonplaceholder.typicode.com/photos/?albumId=$albumId"));
@@ -98,7 +98,7 @@ Future<void> getAllbumsPhotos(albumId) async {
       String data = response.body;
       Iterable lAlbums = jsonDecode(data);
 
-      List<AlbumsPreview>.from(
+      return List<AlbumsPreview>.from(
           lAlbums.map((data) => AlbumsPreview.fromJson(data)));
     }
 

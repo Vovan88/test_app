@@ -58,8 +58,8 @@ class AlbumCardDetailWidgetState extends State<AlbumCardDetailWidget> {
                                   color: Colors.blue[300],
                                   child: Center(
                                       child: CachedNetworkImage(
-                                    cacheKey: item.thumbnailUrl,
-                                    imageUrl: item.thumbnailUrl,
+                                    cacheKey: item.url,
+                                    imageUrl: item.url,
                                     imageBuilder: (context, imageProvider) {
                                       return Container(
                                         width: 100,

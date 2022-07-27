@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test_application/bloc/bloc.dart';
 import 'package:flutter_test_application/models/comment.dart';
@@ -30,6 +32,7 @@ class PostDetailScreenState extends State<PostDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<Comment> _listComments = List.empty();
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -69,6 +72,7 @@ class PostDetailScreenState extends State<PostDetailScreen> {
                       }
 
                       if (snapshot.hasData) {
+                        _listComments = snapshot.data as List<Comment>;
                         return ListView.builder(
                             itemCount: snapshot.data!.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -178,6 +182,15 @@ class PostDetailScreenState extends State<PostDetailScreen> {
                                 ElevatedButton(
                                   child: const Text('Send'),
                                   onPressed: () {
+                                    _listComments.add(Comment(
+                                        name: nameController.text,
+                                        body: bodyController.text,
+                                        email: emailController.text,
+                                        postId: widget.postCard.id,
+                                        id: Random().nextInt(10000)));
+                                    addComment(
+                                        _listComments, widget.postCard.id);
+
                                     Navigator.pop(context);
                                   },
                                 )

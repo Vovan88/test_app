@@ -16,12 +16,14 @@
             "name": "flutter_test_application (profile mode)",
             "request": "launch",
             "type": "dart",
+            "program": "lib/ui/first_screen.dart",
             "flutterMode": "profile"
         },
         {
             "name": "flutter_test_application (release mode)",
             "request": "launch",
             "type": "dart",
+            "program": "lib/ui/first_screen.dart",
             "flutterMode": "release"
         }
     ]
